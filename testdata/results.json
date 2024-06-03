@@ -1,0 +1,56 @@
+{
+  "results": [
+    {
+      "original-pattern": "!important.txt",
+      "formatted-pattern": "important.txt"
+    },
+    {
+      "original-pattern": "doc/frotz/",
+      "formatted-pattern": "doc/frotz"
+    },
+    {
+      "original-pattern": "frotz/",
+      "formatted-pattern": "frotz"
+    },
+    {
+      "original-pattern": "foo/bar/baz",
+      "formatted-pattern": "foo/bar/baz"
+    },
+    {
+      "original-pattern": "*.log",
+      "formatted-pattern": "*.log"
+    },
+    {
+      "original-pattern": "**/foo",
+      "formatted-pattern": "*/foo"
+    },
+    {
+      "original-pattern": "**/foo/bar",
+      "formatted-pattern": "*/foo/bar"
+    },
+    {
+      "original-pattern": "abc/**",
+      "formatted-pattern": "abc/*"
+    },
+    {
+      "original-pattern": "a/**/b",
+      "formatted-pattern": "a/*/b"
+    },
+    {
+      "original-pattern": "fuz?.txt",
+      "formatted-pattern": "fuz?.txt"
+    },
+    {
+      "original-pattern": "buz[a-z]lightyear.txt",
+      "formatted-pattern": "buz[a-z]lightyear.txt"
+    },
+    {
+      "original-pattern": "backup/modules/ignore/*.log",
+      "formatted-pattern": "backup/modules/ignore/*.log"
+    },
+    {
+      "original-pattern": "backup/modules/[a-z]gnore/fo[a-z].txt",
+      "formatted-pattern": "backup/modules/[a-z]gnore/fo[a-z].txt"
+    }
+  ]
+}

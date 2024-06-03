@@ -1,0 +1,34 @@
+# Optional Prefix, negate the pattern
+!important.txt
+
+# Directory Separator
+doc/frotz/
+frotz/
+foo/bar/baz
+
+# Asterisk
+*.log
+
+# Leading consecutive asterisks
+# Matches file or directory foo anywhere, same as pattern foo
+**/foo
+# matches file or directory "bar" anywhere that is directly under dir "foo"
+**/foo/bar
+
+# Trailing consecutive asterisks
+# Matches all files inside directory abc, relative to the location of .gitignore
+abc/**
+
+# Separator followed by consecutive asterisks
+# Matches zero or more directories. matches a/b, a/x/b, a/x/y/b
+a/**/b
+
+# Character matcher. Matches any one character except /
+fuz?.txt
+
+# Range notation, match characters in a range
+buz[a-z]lightyear.txt
+
+# Mix of above patterns
+backup/modules/ignore/*.log
+backup/modules/[a-z]gnore/fo[a-z].txt
