@@ -192,11 +192,39 @@ func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []b
 	iPat.Flags |= FLAG_RANGE_NOTATION
 	return end
 }
+
+func (group *ExcludeGroup) Match(path string) (bool, error) {
 	rel, err := filepath.Rel(group.BasePath, path)
 	if err != nil {
 		return false, err
 	}
 
+	for _, p := range group.PatternList {
+		matched, err := p.Match(rel)
+		if err != nil {
+			return false, err
+		}
+
+		if matched {
+			if p.Flags&FLAG_NEGATE != 0 {
+				return false, nil
+			}
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (iPat *IgnorePattern) Match(path string) (bool, error) {
+	last := filepath.Base(path)
+
+	if iPat.hasFlag(FLAG_NO_DIR) {
+		return filepath.Match(iPat.Pattern, last)
+	}
+
+	return filepath.Match(iPat.Pattern, path)
+}
 
 func (iPat *IgnorePattern) hasFlag(flag Bits) bool {
 	return iPat.Flags&flag != 0
