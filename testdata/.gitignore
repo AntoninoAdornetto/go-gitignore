@@ -1,5 +1,6 @@
 # Optional Prefix, negate the pattern
 !important.txt
+!important!.txt
 
 # Directory Separator
 doc/frotz/
