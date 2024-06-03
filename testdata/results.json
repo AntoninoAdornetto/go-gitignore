@@ -1,0 +1,74 @@
+{
+  "results": [
+    {
+      "original-pattern": "!important.txt",
+      "formatted-pattern": "important.txt",
+      "flags": 33
+    },
+    {
+      "original-pattern": "!important!.txt",
+      "formatted-pattern": "important!.txt",
+      "flags": 33
+    },
+    {
+      "original-pattern": "doc/frotz/",
+      "formatted-pattern": "doc/frotz",
+      "flags": 2
+    },
+    {
+      "original-pattern": "frotz/",
+      "formatted-pattern": "frotz",
+      "flags": 2
+    },
+    {
+      "original-pattern": "foo/bar/baz",
+      "formatted-pattern": "foo/bar/baz",
+      "flags": 0
+    },
+    {
+      "original-pattern": "*.log",
+      "formatted-pattern": "*.log",
+      "flags": 5
+    },
+    {
+      "original-pattern": "**/foo",
+      "formatted-pattern": "*/foo",
+      "flags": 4
+    },
+    {
+      "original-pattern": "**/foo/bar",
+      "formatted-pattern": "*/foo/bar",
+      "flags": 4
+    },
+    {
+      "original-pattern": "abc/**",
+      "formatted-pattern": "abc/*",
+      "flags": 4
+    },
+    {
+      "original-pattern": "a/**/b",
+      "formatted-pattern": "a/*/b",
+      "flags": 4
+    },
+    {
+      "original-pattern": "fuz?.txt",
+      "formatted-pattern": "fuz?.txt",
+      "flags": 9
+    },
+    {
+      "original-pattern": "buz[a-z]lightyear.txt",
+      "formatted-pattern": "buz[a-z]lightyear.txt",
+      "flags": 17
+    },
+    {
+      "original-pattern": "backup/modules/ignore/*.log",
+      "formatted-pattern": "backup/modules/ignore/*.log",
+      "flags": 4
+    },
+    {
+      "original-pattern": "backup/modules/[a-z]gnore/fo[a-z].txt",
+      "formatted-pattern": "backup/modules/[a-z]gnore/fo[a-z].txt",
+      "flags": 16
+    }
+  ]
+}
