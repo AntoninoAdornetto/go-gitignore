@@ -9,6 +9,14 @@ import (
 	ignore "github.com/AntoninoAdornetto/go-gitignore"
 )
 
+/*
+testdata/.gitignore - contains the patterns used for test cases
+testdata/results.json - contains the expected results we should get after parsing each pattern
+
+If additional tests need to be added, see the bit flags in ignore.go for how to calculate the
+decimal value. It's pretty straight forward but wanted to mention it just in case
+*/
+
 func TestScanPatterns(t *testing.T) {
 	ig := ignore.Ignorer{}
 	err := ig.AppendExcludeGroup("./testdata/.gitignore", ".gitignore")
@@ -19,6 +27,8 @@ func TestScanPatterns(t *testing.T) {
 
 	for i, expected := range expectedResults.Results {
 		original := expected.Original
+		formatted := expected.Formatted
+		flags := expected.Flags
 		actual := actualResults.PatternList[i]
 
 		if original != actual.OriginalPattern {
@@ -29,6 +39,14 @@ func TestScanPatterns(t *testing.T) {
 			)
 		}
 
+		if formatted != actual.Pattern {
+			t.Fatalf("expected formatted pattern to be %s but got %s", formatted, actual.Pattern)
+		}
+
+		// heads up, the flags in json have to be converted from binary to decmial.
+		if flags != actual.Flags {
+			t.Fatalf("expected flags for %s to be %d but got %d", formatted, flags, actual.Flags)
+		}
 	}
 }
 
@@ -144,6 +162,7 @@ type results struct {
 type resultList struct {
 	Original  string `json:"original-pattern"`
 	Formatted string `json:"formatted-pattern"`
+	Flags     uint8  `json:"flags"`
 }
 
 func readResultData(t *testing.T) results {
