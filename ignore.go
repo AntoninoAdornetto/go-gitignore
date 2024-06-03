@@ -86,12 +86,19 @@ func ScanPatterns(r io.Reader) ([]IgnorePattern, error) {
 			continue
 		}
 
+		line = bytes.TrimFunc(line, unicode.IsSpace)
+		iPattern := NewIgnorePattern(line)
+		iPatterns = append(iPatterns, iPattern)
 	}
 
 	return iPatterns, scanner.Err()
 }
 
 func NewIgnorePattern(line []byte) IgnorePattern {
-	return IgnorePattern{}
+	return parsePattern(line)
 }
 
+func parsePattern(line []byte) IgnorePattern {
+	iPattern := IgnorePattern{OriginalPattern: string(line)}
+	return iPattern
+}
