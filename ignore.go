@@ -193,6 +193,15 @@ func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []b
 	return end
 }
 
+func (ig *Ignorer) Match(path string) (bool, error) {
+	for _, group := range ig.ExcludeGroups {
+		if match, err := group.Match(path); err != nil || match {
+			return match, err
+		}
+	}
+	return false, nil
+}
+
 func (group *ExcludeGroup) Match(path string) (bool, error) {
 	rel, err := filepath.Rel(group.BasePath, path)
 	if err != nil {
