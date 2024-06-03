@@ -1,8 +1,12 @@
 package ignore
 
 import (
+	"bufio"
+	"bytes"
+	"io"
 	"os"
 	"path/filepath"
+	"unicode"
 )
 
 type Bits = uint8
@@ -70,5 +74,17 @@ func (ig *Ignorer) AppendExcludeGroup(path, src string) error {
 
 	ig.ExcludeGroups = append(ig.ExcludeGroups, *group)
 	return nil
+}
+
+func ScanPatterns(r io.Reader) ([]IgnorePattern, error) {
+	iPatterns := make([]IgnorePattern, 0, 10)
+	scanner := bufio.NewScanner(r)
+
+
+	return iPatterns, scanner.Err()
+}
+
+func NewIgnorePattern(line []byte) IgnorePattern {
+	return IgnorePattern{}
 }
 
