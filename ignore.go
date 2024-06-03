@@ -44,6 +44,13 @@ type IgnorePattern struct {
 func NewIgnorer(absPath string) (*Ignorer, error) {
 	ig := &Ignorer{}
 
+	/*
+		@TODO add src parameter and remove hardcoded append methods
+		add one additional param called src - origin of the exclude list.
+		the abs path should then be to that of the exclude file.
+		i.e. /home/projects/gitproject/.gitignore or /home/projects/gitproject/.git/info/exclude
+		for subdirectory .gitignores, the caller can use the AppendExcludeGroup method.
+	*/
 	ignorePath := filepath.Join(absPath, ".gitignore")
 	excludePath := filepath.Join(absPath, ".git", "info", "exclude")
 
