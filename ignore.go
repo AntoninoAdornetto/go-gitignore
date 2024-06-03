@@ -192,3 +192,8 @@ func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []b
 	iPat.Flags |= FLAG_RANGE_NOTATION
 	return end
 }
+	rel, err := filepath.Rel(group.BasePath, path)
+	if err != nil {
+		return false, err
+	}
+
