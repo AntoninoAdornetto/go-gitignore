@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	globstar "github.com/bmatcuk/doublestar/v4"
 )
 
 type Bits = uint8
@@ -225,17 +227,14 @@ func (group *ExcludeGroup) Match(path string) (bool, error) {
 	return false, nil
 }
 
-// @TODO complete the match implementation. Current functionality doesn't handle all scenarios
 func (iPat *IgnorePattern) Match(path string) (bool, error) {
 	last := filepath.Base(path)
-
-	if iPat.hasFlag(FLAG_NO_DIR) {
+	switch {
+	case iPat.hasFlag(FLAG_NO_DIR):
 		return filepath.Match(iPat.Pattern, last)
+	case iPat.hasFlag(FLAG_WILDCARD):
+		return globstar.Match(iPat.Pattern, path)
+	default:
+		return filepath.Match(iPat.Pattern, path)
 	}
-
-	return filepath.Match(iPat.Pattern, path)
-}
-
-func (iPat *IgnorePattern) hasFlag(flag Bits) bool {
-	return iPat.Flags&flag != 0
 }
