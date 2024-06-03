@@ -3,9 +3,11 @@ package ignore
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"unicode"
 )
 
@@ -63,6 +65,13 @@ func NewExcludeGroup(path, src string) (*ExcludeGroup, error) {
 	}
 
 	defer iFile.Close()
+	iPatterns, err := ScanPatterns(iFile)
+	if err != nil {
+		return nil, err
+	}
+
+	group.RecordCount = len(iPatterns)
+	group.PatternList = iPatterns
 	return group, nil
 }
 
@@ -100,5 +109,86 @@ func NewIgnorePattern(line []byte) IgnorePattern {
 
 func parsePattern(line []byte) IgnorePattern {
 	iPattern := IgnorePattern{OriginalPattern: string(line)}
+	builder := strings.Builder{}
+	separatorCount := 0
+
+	for i := 0; i < len(line); i++ {
+		switch line[i] {
+		case '!':
+			iPattern.onNegateCase(&builder, i)
+		case '/':
+			separatorCount++
+			iPattern.onSeparatorCase(&builder, i, line)
+		case '*':
+			i = iPattern.onWildcardCase(&builder, i, line)
+		case '?':
+			iPattern.onCharMatcherCase(&builder)
+		case '[':
+			i = iPattern.onRangeCase(&builder, i, line)
+		default:
+			builder.WriteByte(line[i])
+		}
+	}
+
+	if separatorCount == 0 {
+		iPattern.Flags |= FLAG_NO_DIR
+	}
+
+	iPattern.Pattern = builder.String()
 	return iPattern
+}
+
+func (iPat *IgnorePattern) onNegateCase(builder *strings.Builder, i int) {
+	if i == 0 {
+		iPat.Flags |= FLAG_NEGATE
+		return
+	}
+
+	builder.WriteByte('!')
+}
+
+func (iPat *IgnorePattern) onSeparatorCase(builder *strings.Builder, i int, line []byte) {
+	if i == len(line)-1 {
+		iPat.Flags |= FLAG_MUST_BE_DIR
+		return
+	}
+
+	builder.WriteByte('/')
+}
+
+func (iPat *IgnorePattern) onWildcardCase(builder *strings.Builder, i int, line []byte) int {
+	increment := i
+	if i+1 < len(line) && line[i+1] == '*' {
+		increment++
+	}
+
+	builder.WriteByte('*')
+	iPat.Flags |= FLAG_WILDCARD
+	return increment
+}
+
+func (iPat *IgnorePattern) onCharMatcherCase(builder *strings.Builder) {
+	iPat.Flags |= FLAG_MATCHER
+	builder.WriteByte('?')
+}
+
+// @TODO check into nested range notation, is that possible? May need to utilize a stack based approach
+func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []byte) int {
+	start, end := i, i
+	balanced := false
+
+	for ; start < len(line); end++ {
+		if line[end] == ']' {
+			balanced = true
+			break
+		}
+	}
+
+	if !balanced {
+		panic(fmt.Sprintf("unbalanced range notation pattern: %s", string(line)))
+	}
+
+	builder.Write(line[start : end+1])
+	iPat.Flags |= FLAG_RANGE_NOTATION
+	return end
 }
