@@ -80,6 +80,13 @@ func ScanPatterns(r io.Reader) ([]IgnorePattern, error) {
 	iPatterns := make([]IgnorePattern, 0, 10)
 	scanner := bufio.NewScanner(r)
 
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		if len(line) == 0 || line[0] == '#' {
+			continue
+		}
+
+	}
 
 	return iPatterns, scanner.Err()
 }
