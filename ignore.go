@@ -216,6 +216,7 @@ func (group *ExcludeGroup) Match(path string) (bool, error) {
 	return false, nil
 }
 
+// @TODO complete the match implementation. Current functionality doesn't handle all scenarios
 func (iPat *IgnorePattern) Match(path string) (bool, error) {
 	last := filepath.Base(path)
 
