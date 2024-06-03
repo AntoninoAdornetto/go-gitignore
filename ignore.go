@@ -197,3 +197,7 @@ func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []b
 		return false, err
 	}
 
+
+func (iPat *IgnorePattern) hasFlag(flag Bits) bool {
+	return iPat.Flags&flag != 0
+}
