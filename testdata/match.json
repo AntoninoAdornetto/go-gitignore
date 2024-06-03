@@ -1,0 +1,99 @@
+{
+  "assertions": [
+    {
+      "pattern": "*.log",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/log.log",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/out/logs/20240631.log",
+          "match": true
+        }
+      ]
+    },
+    {
+      "pattern": "doc/frotz/",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/doc/frotz",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/a/doc/frotz",
+          "match": false
+        }
+      ]
+    },
+    {
+      "pattern": "frotz/",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/frotz",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/a/frotz",
+          "match": true
+        }
+      ]
+    },
+    {
+      "pattern": "src/module/fo?.txt",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/module/foo.txt",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/module/bar.txt",
+          "match": false
+        }
+      ]
+    },
+    {
+      "pattern": "src/[a-z][a-z][a-z]/ignore",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/foo/ignore",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/bar/ignore",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/barz/ignore",
+          "match": false
+        }
+      ]
+    },
+    {
+      "pattern": "**/foo",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/foo",
+          "match": true
+        },
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/src/module/foo",
+          "match": true
+        }
+      ]
+    }
+  ]
+}
