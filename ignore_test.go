@@ -61,7 +61,7 @@ func TestNewIgnorer(t *testing.T) {
 	}
 
 	// attempt to create a new ignorer with a bad path
-	ig, err = ignore.NewIgnorer("./testdata/unknowndir")
+	_, err = ignore.NewIgnorer("./testdata/unknowndir")
 	if err == nil {
 		t.Log("expected an error but got nil")
 		t.FailNow()
@@ -180,5 +180,9 @@ func readResultData(t *testing.T) results {
 
 	results := results{}
 	err = json.Unmarshal(data, &results)
+	if err != nil {
+		t.Fatalf("expected unmarshal error to be nil but got %s", err.Error())
+	}
+
 	return results
 }
