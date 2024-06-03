@@ -1,10 +1,36 @@
 package ignore_test
 
 import (
+	"encoding/json"
+	"io"
+	"os"
 	"testing"
 
 	ignore "github.com/AntoninoAdornetto/go-gitignore"
 )
+
+func TestScanPatterns(t *testing.T) {
+	ig := ignore.Ignorer{}
+	err := ig.AppendExcludeGroup("./testdata/.gitignore", ".gitignore")
+	assertExcludeGroup(t, &ig.ExcludeGroups[0], err)
+
+	expectedResults := readResultData(t)
+	actualResults := ig.ExcludeGroups[0]
+
+	for i, expected := range expectedResults.Results {
+		original := expected.Original
+		actual := actualResults.PatternList[i]
+
+		if original != actual.OriginalPattern {
+			t.Fatalf(
+				"expected original pattern to be %s but got %s",
+				original,
+				actual.OriginalPattern,
+			)
+		}
+
+	}
+}
 
 func TestNewIgnorer(t *testing.T) {
 	ig, err := ignore.NewIgnorer("./")
@@ -109,4 +135,31 @@ func assertExcludeGroup(t *testing.T, exc *ignore.ExcludeGroup, err error) {
 		t.Log("expected exclude group not to be nill")
 		t.FailNow()
 	}
+}
+
+type results struct {
+	Results []resultList `json:"results"`
+}
+
+type resultList struct {
+	Original  string `json:"original-pattern"`
+	Formatted string `json:"formatted-pattern"`
+}
+
+func readResultData(t *testing.T) results {
+	f, err := os.Open("./testdata/results.json")
+	if err != nil {
+		t.Fatalf("expected to not receive an error but got %s", err.Error())
+	}
+
+	defer f.Close()
+
+	data, err := io.ReadAll(f)
+	if err != nil {
+		t.Fatalf("expected to not receive an error but got %s", err.Error())
+	}
+
+	results := results{}
+	err = json.Unmarshal(data, &results)
+	return results
 }
