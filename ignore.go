@@ -122,7 +122,7 @@ func parsePattern(line []byte) IgnorePattern {
 			separatorCount++
 			iPattern.onSeparatorCase(&builder, i, line)
 		case '*':
-			i = iPattern.onWildcardCase(&builder, i, line)
+			iPattern.onWildcardCase(&builder)
 		case '?':
 			iPattern.onCharMatcherCase(&builder)
 		case '[':
@@ -158,15 +158,9 @@ func (iPat *IgnorePattern) onSeparatorCase(builder *strings.Builder, i int, line
 	builder.WriteByte('/')
 }
 
-func (iPat *IgnorePattern) onWildcardCase(builder *strings.Builder, i int, line []byte) int {
-	increment := i
-	if i+1 < len(line) && line[i+1] == '*' {
-		increment++
-	}
-
+func (iPat *IgnorePattern) onWildcardCase(builder *strings.Builder) {
 	builder.WriteByte('*')
 	iPat.Flags |= FLAG_WILDCARD
-	return increment
 }
 
 func (iPat *IgnorePattern) onCharMatcherCase(builder *strings.Builder) {
@@ -195,6 +189,10 @@ func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []b
 	return end
 }
 
+func (iPat *IgnorePattern) hasFlag(flag Bits) bool {
+	return iPat.Flags&flag != 0
+}
+
 func (ig *Ignorer) Match(path string) (bool, error) {
 	for _, group := range ig.ExcludeGroups {
 		if match, err := group.Match(path); err != nil || match {
@@ -217,7 +215,7 @@ func (group *ExcludeGroup) Match(path string) (bool, error) {
 		}
 
 		if matched {
-			if p.Flags&FLAG_NEGATE != 0 {
+			if p.hasFlag(FLAG_NEGATE) {
 				return false, nil
 			}
 			return true, nil
