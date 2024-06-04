@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	globstar "github.com/bmatcuk/doublestar/v4"
 )
 
 type Bits = uint8
@@ -42,6 +44,13 @@ type IgnorePattern struct {
 func NewIgnorer(absPath string) (*Ignorer, error) {
 	ig := &Ignorer{}
 
+	/*
+		@TODO add src parameter and remove hardcoded append methods
+		add one additional param called src - origin of the exclude list.
+		the abs path should then be to that of the exclude file.
+		i.e. /home/projects/gitproject/.gitignore or /home/projects/gitproject/.git/info/exclude
+		for subdirectory .gitignores, the caller can use the AppendExcludeGroup method.
+	*/
 	ignorePath := filepath.Join(absPath, ".gitignore")
 	excludePath := filepath.Join(absPath, ".git", "info", "exclude")
 
@@ -120,7 +129,7 @@ func parsePattern(line []byte) IgnorePattern {
 			separatorCount++
 			iPattern.onSeparatorCase(&builder, i, line)
 		case '*':
-			i = iPattern.onWildcardCase(&builder, i, line)
+			iPattern.onWildcardCase(&builder)
 		case '?':
 			iPattern.onCharMatcherCase(&builder)
 		case '[':
@@ -156,15 +165,9 @@ func (iPat *IgnorePattern) onSeparatorCase(builder *strings.Builder, i int, line
 	builder.WriteByte('/')
 }
 
-func (iPat *IgnorePattern) onWildcardCase(builder *strings.Builder, i int, line []byte) int {
-	increment := i
-	if i+1 < len(line) && line[i+1] == '*' {
-		increment++
-	}
-
+func (iPat *IgnorePattern) onWildcardCase(builder *strings.Builder) {
 	builder.WriteByte('*')
 	iPat.Flags |= FLAG_WILDCARD
-	return increment
 }
 
 func (iPat *IgnorePattern) onCharMatcherCase(builder *strings.Builder) {
@@ -193,6 +196,10 @@ func (iPat *IgnorePattern) onRangeCase(builder *strings.Builder, i int, line []b
 	return end
 }
 
+func (iPat *IgnorePattern) hasFlag(flag Bits) bool {
+	return iPat.Flags&flag != 0
+}
+
 func (ig *Ignorer) Match(path string) (bool, error) {
 	for _, group := range ig.ExcludeGroups {
 		if match, err := group.Match(path); err != nil || match {
@@ -215,7 +222,7 @@ func (group *ExcludeGroup) Match(path string) (bool, error) {
 		}
 
 		if matched {
-			if p.Flags&FLAG_NEGATE != 0 {
+			if p.hasFlag(FLAG_NEGATE) {
 				return false, nil
 			}
 			return true, nil
@@ -225,17 +232,14 @@ func (group *ExcludeGroup) Match(path string) (bool, error) {
 	return false, nil
 }
 
-// @TODO complete the match implementation. Current functionality doesn't handle all scenarios
 func (iPat *IgnorePattern) Match(path string) (bool, error) {
 	last := filepath.Base(path)
-
-	if iPat.hasFlag(FLAG_NO_DIR) {
+	switch {
+	case iPat.hasFlag(FLAG_NO_DIR):
 		return filepath.Match(iPat.Pattern, last)
+	case iPat.hasFlag(FLAG_WILDCARD):
+		return globstar.Match(iPat.Pattern, path)
+	default:
+		return filepath.Match(iPat.Pattern, path)
 	}
-
-	return filepath.Match(iPat.Pattern, path)
-}
-
-func (iPat *IgnorePattern) hasFlag(flag Bits) bool {
-	return iPat.Flags&flag != 0
 }

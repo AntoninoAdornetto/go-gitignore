@@ -37,11 +37,6 @@
           "base": "/projects/gitproject",
           "path": "/projects/gitproject/frotz",
           "match": true
-        },
-        {
-          "base": "/projects/gitproject",
-          "path": "/projects/gitproject/a/frotz",
-          "match": true
         }
       ]
     },

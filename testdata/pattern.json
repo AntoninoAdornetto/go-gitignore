@@ -32,22 +32,22 @@
     },
     {
       "original-pattern": "**/foo",
-      "formatted-pattern": "*/foo",
+      "formatted-pattern": "**/foo",
       "flags": 4
     },
     {
       "original-pattern": "**/foo/bar",
-      "formatted-pattern": "*/foo/bar",
+      "formatted-pattern": "**/foo/bar",
       "flags": 4
     },
     {
       "original-pattern": "abc/**",
-      "formatted-pattern": "abc/*",
+      "formatted-pattern": "abc/**",
       "flags": 4
     },
     {
       "original-pattern": "a/**/b",
-      "formatted-pattern": "a/*/b",
+      "formatted-pattern": "a/**/b",
       "flags": 4
     },
     {

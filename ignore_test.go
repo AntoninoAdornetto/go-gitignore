@@ -19,9 +19,6 @@ decimal value. It's pretty straight forward but wanted to mention it just in cas
 */
 
 func TestMatchPaths(t *testing.T) {
-	// skipping temporarily while I implement the remaining match functionality
-	// I found some edge cases that are causing tests to fail.
-	t.Skip()
 	ig := ignore.Ignorer{}
 	err := ig.AppendExcludeGroup("./testdata/.gitignore", ".gitignore")
 	assertExcludeGroup(t, &ig.ExcludeGroups[0], err)
