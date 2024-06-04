@@ -41,34 +41,24 @@ type IgnorePattern struct {
 	OriginalPattern string
 }
 
-func NewIgnorer(absPath string) (*Ignorer, error) {
+func NewIgnorer(absPath string, src string) (*Ignorer, error) {
 	ig := &Ignorer{}
 
-	/*
-		@TODO add src parameter and remove hardcoded append methods
-		add one additional param called src - origin of the exclude list.
-		the abs path should then be to that of the exclude file.
-		i.e. /home/projects/gitproject/.gitignore or /home/projects/gitproject/.git/info/exclude
-		for subdirectory .gitignores, the caller can use the AppendExcludeGroup method.
-	*/
-	ignorePath := filepath.Join(absPath, ".gitignore")
-	excludePath := filepath.Join(absPath, ".git", "info", "exclude")
-
-	if err := ig.AppendExcludeGroup(ignorePath, ".gitignore"); err != nil {
+	if err := ig.AppendExcludeGroup(absPath, ".gitignore"); err != nil {
 		return nil, err
 	}
 
-	if err := ig.AppendExcludeGroup(excludePath, "exclude"); err != nil {
+	if err := ig.AppendExcludeGroup(absPath, ".git/info/exclude"); err != nil {
 		return nil, err
 	}
 
 	return ig, nil
 }
 
-func NewExcludeGroup(path, src string) (*ExcludeGroup, error) {
-	group := &ExcludeGroup{Src: src, BasePath: filepath.Clean(path)}
+func NewExcludeGroup(basePath, filePath string) (*ExcludeGroup, error) {
+	group := &ExcludeGroup{Src: filePath, BasePath: filepath.Clean(basePath)}
 
-	iFile, err := os.Open(path)
+	iFile, err := os.Open(filepath.Join(basePath, filePath))
 	if err != nil {
 		return nil, err
 	}
