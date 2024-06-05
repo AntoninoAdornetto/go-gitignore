@@ -49,7 +49,9 @@ func NewIgnorer(absPath string) (*Ignorer, error) {
 	}
 
 	if err := ig.AppendExcludeGroup(absPath, ".git/info/exclude"); err != nil {
-		return nil, err
+		if !os.IsExist(err) {
+			return nil, err
+		}
 	}
 
 	return ig, nil
