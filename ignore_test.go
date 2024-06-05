@@ -20,7 +20,7 @@ decimal value. It's pretty straight forward but wanted to mention it just in cas
 
 func TestMatchPaths(t *testing.T) {
 	ig := ignore.Ignorer{}
-	err := ig.AppendExcludeGroup("./testdata/.gitignore", ".gitignore")
+	err := ig.AppendExcludeGroup("./testdata", ".gitignore")
 	assertExcludeGroup(t, &ig.ExcludeGroups[0], err)
 
 	expectedResults := readMatchData(t)
@@ -51,7 +51,7 @@ func TestMatchPaths(t *testing.T) {
 
 func TestParsePatterns(t *testing.T) {
 	ig := ignore.Ignorer{}
-	err := ig.AppendExcludeGroup("./testdata/.gitignore", ".gitignore")
+	err := ig.AppendExcludeGroup("./testdata", ".gitignore")
 	assertExcludeGroup(t, &ig.ExcludeGroups[0], err)
 
 	expectedResults := readPatternData(t)
@@ -102,11 +102,11 @@ func TestNewIgnorer(t *testing.T) {
 
 func TestNewExcludeGroup(t *testing.T) {
 	// .gitignore exclude group
-	group, err := ignore.NewExcludeGroup("./.gitignore", ".gitignore")
+	group, err := ignore.NewExcludeGroup("./testdata", ".gitignore")
 	assertExcludeGroup(t, group, err)
 
-	// .git/info/exclude exclude group
-	group, err = ignore.NewExcludeGroup("./.git/info/exclude", "exclude")
+	// .git/info/exclude exclude group. Using root dir instead of testdata
+	group, err = ignore.NewExcludeGroup("./", ".git/info/exclude")
 	assertExcludeGroup(t, group, err)
 
 	// error when path does not contain a .gitignore or exclude file
@@ -136,7 +136,7 @@ func TestNewExcludeGroup(t *testing.T) {
 func TestAppendExcludeGroup(t *testing.T) {
 	ig := ignore.Ignorer{}
 
-	err := ig.AppendExcludeGroup("./.gitignore", ".gitignore")
+	err := ig.AppendExcludeGroup("./testdata", ".gitignore")
 	if err != nil {
 		t.Fatalf("expected append error to be nil but got %s", err.Error())
 	}
@@ -145,7 +145,8 @@ func TestAppendExcludeGroup(t *testing.T) {
 		t.Fatalf("expected exclude groups to have length of 1 but got %d", len(ig.ExcludeGroups))
 	}
 
-	err = ig.AppendExcludeGroup("./.git/info/exclude", "exclude")
+	// .git/info/exclude exclude group. Using root dir instead of testdata
+	err = ig.AppendExcludeGroup("./", ".git/info/exclude")
 	if err != nil {
 		t.Fatalf("expected append error to be nil but got %s", err.Error())
 	}
