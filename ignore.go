@@ -41,7 +41,7 @@ type IgnorePattern struct {
 	OriginalPattern string
 }
 
-func NewIgnorer(absPath string, src string) (*Ignorer, error) {
+func NewIgnorer(absPath string) (*Ignorer, error) {
 	ig := &Ignorer{}
 
 	if err := ig.AppendExcludeGroup(absPath, ".gitignore"); err != nil {
