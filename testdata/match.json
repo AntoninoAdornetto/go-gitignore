@@ -89,6 +89,16 @@
           "match": true
         }
       ]
+    },
+    {
+      "pattern": "/node_modules",
+      "tests": [
+        {
+          "base": "/projects/gitproject",
+          "path": "/projects/gitproject/node_modules",
+          "match": true
+        }
+      ]
     }
   ]
 }

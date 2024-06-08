@@ -149,6 +149,11 @@ func (iPat *IgnorePattern) onNegateCase(builder *strings.Builder, i int) {
 }
 
 func (iPat *IgnorePattern) onSeparatorCase(builder *strings.Builder, i int, line []byte) {
+	if i == 0 {
+		// @TODO skipping out on writing the leading dir separator is a temp fix, revisit.
+		return
+	}
+
 	if i == len(line)-1 {
 		iPat.Flags |= FLAG_MUST_BE_DIR
 		return
